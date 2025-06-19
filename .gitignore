@@ -1,7 +1,0 @@
-**/node_modules/
-**/__pycache__/
-**/venv/
-.vscode/
-**/zenro/frontend/package-lock.json
-./zenro/frontend/package-lock.json
-**/package-lock.json

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Device Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .smart-homes-section {
+            margin-bottom: 30px;
+        }
+        .rooms-section {
+            margin-bottom: 30px;
+        }
+        .devices-section {
+            margin-bottom: 30px;
+        }
+        .device {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #fff;
+        }
+        .device.on {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+        }        .device.off {
+            background: #ffeaea;
+            border-color: #f44336;
+        }
+        .energy-dashboard {
+            background: #e3f2fd;
+            border: 1px solid #2196F3;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .energy-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .energy-metric {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .energy-metric h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .energy-metric .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .demo-scenarios {
+            background: #f3e5f5;
+            border: 1px solid #9c27b0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .scenario-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .btn-scenario {
+            background: #9c27b0;
+            color: white;
+            padding: 10px 15px;
+        }
+        .efficiency-tips {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+        .tips-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+        .device h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .device-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        input[type="text"], input[type="password"], input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+        .hidden {
+            display: none;
+        }
+        .room {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .room.unlocked {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+        }
+        .slider {
+            width: 200px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Smart Home Device Simulator</h1>
+        
+        <div id="status-area"></div>
+        
+        <!-- Login Section -->
+        <div id="login-section" class="login-section">
+            <h2>Login</h2>
+            <div>
+                <input type="text" id="username" placeholder="Username" value="testuser">
+                <input type="password" id="password" placeholder="Password" value="testpass">
+                <button class="btn-primary" onclick="login()">Login</button>
+                <button class="btn-secondary" onclick="register()">Register</button>
+            </div>
+        </div>
+        
+        <!-- Main Interface (hidden until logged in) -->
+        <div id="main-interface" class="hidden">
+            <!-- Smart Homes Section -->
+            <div class="smart-homes-section">
+                <h2>Smart Homes</h2>
+                <div>
+                    <input type="text" id="home-name" placeholder="Home Name">
+                    <input type="text" id="join-password" placeholder="Join Password (optional)">
+                    <button class="btn-primary" onclick="createSmartHome()">Create Home</button>
+                </div>
+                <div id="smart-homes-list"></div>
+            </div>
+            
+            <!-- Rooms Section -->
+            <div id="rooms-section" class="rooms-section hidden">
+                <h2>Rooms</h2>
+                <div id="rooms-list"></div>
+            </div>
+              <!-- Devices Section -->
+            <div id="devices-section" class="devices-section hidden">
+                <h2>Devices</h2>
+                
+                <!-- Energy Dashboard -->
+                <div class="energy-dashboard">
+                    <h3>🔋 Real-Time Energy Dashboard</h3>
+                    <div class="energy-summary" id="energy-summary">
+                        <!-- Energy metrics will be populated here -->
+                    </div>
+                    <button class="btn-primary" onclick="refreshEnergyDashboard()">Refresh Energy Data</button>
+                </div>
+                
+                <!-- Demo Scenarios -->
+                <div class="demo-scenarios">
+                    <h3>🎭 Demo Scenarios</h3>
+                    <p>Run predefined scenarios to demonstrate smart home automation:</p>
+                    <div class="scenario-buttons">
+                        <button class="btn-scenario" onclick="runScenario('morning_routine')">Morning Routine</button>
+                        <button class="btn-scenario" onclick="runScenario('energy_saving')">Energy Saving Mode</button>
+                        <button class="btn-scenario" onclick="runScenario('realistic_usage')">Realistic Usage</button>
+                        <button class="btn-secondary" onclick="simulateActivity()">Random Activity</button>
+                    </div>
+                </div>
+                
+                <!-- Energy Efficiency Tips -->
+                <div class="efficiency-tips">
+                    <h3>💡 Energy Efficiency Tips</h3>
+                    <ul class="tips-list" id="efficiency-tips-list">
+                        <!-- Tips will be populated here -->
+                    </ul>
+                </div>
+                
+                <div id="devices-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        let authToken = null;
+        let currentSmartHome = null;
+        let devices = [];
+        let rooms = [];
+        
+        // Utility functions
+        function showStatus(message, type = 'success') {
+            const statusArea = document.getElementById('status-area');
+            statusArea.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => statusArea.innerHTML = '', 3000);
+        }
+        
+        function apiCall(endpoint, method = 'GET', data = null) {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            if (authToken) {
+                headers['Authorization'] = `Token ${authToken}`;
+            }
+            
+            const config = {
+                method,
+                headers,
+            };
+            
+            if (data) {
+                config.body = JSON.stringify(data);
+            }
+            
+            return fetch(`${API_BASE}${endpoint}`, config)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw err; });
+                    }
+                    return response.json();
+                });
+        }
+        
+        // Authentication
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await apiCall('/auth/login/', 'POST', { username, password });
+                authToken = response.token;
+                showStatus(`Welcome, ${response.username}!`);
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('main-interface').classList.remove('hidden');
+                loadSmartHomes();
+            } catch (error) {
+                showStatus('Login failed: ' + (error.error || 'Unknown error'), 'error');
+            }
+        }
+        
+        async function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await apiCall('/auth/register/', 'POST', { username, password });
+                authToken = response.token;
+                showStatus(`Account created! Welcome, ${response.username}!`);
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('main-interface').classList.remove('hidden');
+                loadSmartHomes();
+            } catch (error) {
+                showStatus('Registration failed: ' + (error.username?.[0] || error.error || 'Unknown error'), 'error');
+            }
+        }
+        
+        // Smart Home Management
+        async function loadSmartHomes() {
+            try {
+                const smartHomes = await apiCall('/smarthomes/');
+                const container = document.getElementById('smart-homes-list');
+                container.innerHTML = '';
+                
+                smartHomes.forEach(home => {
+                    const homeDiv = document.createElement('div');
+                    homeDiv.className = 'room';
+                    homeDiv.innerHTML = `
+                        <h3>${home.name}</h3>
+                        <p>Created by: ${home.creator}</p>
+                        <button class="btn-primary" onclick="selectSmartHome(${home.id}, '${home.name}')">Select</button>
+                    `;
+                    container.appendChild(homeDiv);
+                });
+            } catch (error) {
+                showStatus('Failed to load smart homes: ' + (error.detail || 'Unknown error'), 'error');
+            }
+        }
+        
+        async function createSmartHome() {
+            const name = document.getElementById('home-name').value;
+            const joinPassword = document.getElementById('join-password').value;
+            
+            if (!name) {
+                showStatus('Please enter a home name', 'error');
+                return;
+            }
+            
+            try {
+                await apiCall('/create-smarthome/', 'POST', { name, join_password: joinPassword });
+                showStatus('Smart home created successfully!');
+                document.getElementById('home-name').value = '';
+                document.getElementById('join-password').value = '';
+                loadSmartHomes();
+            } catch (error) {
+                showStatus('Failed to create smart home: ' + (error.error || 'Unknown error'), 'error');
+            }
+        }
+          async function selectSmartHome(homeId, homeName) {
+            currentSmartHome = homeId;
+            showStatus(`Selected: ${homeName}`);
+            document.getElementById('rooms-section').classList.remove('hidden');
+            document.getElementById('devices-section').classList.remove('hidden');
+            loadRooms();
+            loadDevices();
+            refreshEnergyDashboard(); // Load energy data when home is selected
+        }
+        
+        // Demo Features - Energy Dashboard
+        async function refreshEnergyDashboard() {
+            if (!currentSmartHome) return;
+            
+            try {
+                const energyData = await apiCall('/demo/energy-dashboard/');
+                displayEnergyDashboard(energyData);
+            } catch (error) {
+                showStatus('Failed to load energy dashboard: ' + (error.error || 'Unknown error'), 'error');
+            }
+        }
+        
+        function displayEnergyDashboard(data) {
+            const container = document.getElementById('energy-summary');
+            const summary = data.home_summary;
+            
+            container.innerHTML = `
+                <div class="energy-metric">
+                    <h4>Total Consumption</h4>
+                    <div class="value">${summary.total_consumption_watts}W</div>
+                </div>
+                <div class="energy-metric">
+                    <h4>Solar Generation</h4>
+                    <div class="value">${summary.total_generation_watts}W</div>
+                </div>
+                <div class="energy-metric">
+                    <h4>Net Usage</h4>
+                    <div class="value" style="color: ${summary.net_consumption_watts > 0 ? '#f44336' : '#4CAF50'}">
+                        ${summary.net_consumption_watts}W
+                    </div>
+                </div>
+                <div class="energy-metric">
+                    <h4>Efficiency Score</h4>
+                    <div class="value" style="color: ${summary.efficiency_score > 70 ? '#4CAF50' : '#ff9800'}">
+                        ${Math.round(summary.efficiency_score)}%
+                    </div>
+                </div>
+            `;
+            
+            // Display efficiency tips
+            const tipsContainer = document.getElementById('efficiency-tips-list');
+            tipsContainer.innerHTML = '';
+            data.efficiency_tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipsContainer.appendChild(li);
+            });
+        }
+        
+        // Demo Scenarios
+        async function runScenario(scenarioType) {
+            if (!currentSmartHome) {
+                showStatus('Please select a smart home first', 'error');
+                return;
+            }
+            
+            try {
+                showStatus(`Running ${scenarioType.replace('_', ' ')} scenario...`, 'info');
+                const result = await apiCall('/demo/run-scenario/', 'POST', { scenario: scenarioType });
+                showStatus(`✅ ${result.result}`, 'success');
+                
+                // Refresh data after scenario
+                setTimeout(() => {
+                    loadDevices();
+                    refreshEnergyDashboard();
+                }, 1000);
+                
+            } catch (error) {
+                showStatus('Failed to run scenario: ' + (error.error || 'Unknown error'), 'error');
+            }
+        }
+        
+        // Simulate Random Activity
+        async function simulateActivity() {
+            if (!currentSmartHome) {
+                showStatus('Please select a smart home first', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Simulating random device activity...', 'info');
+                const result = await apiCall('/demo/simulate-activity/', 'POST');
+                showStatus(`🎲 ${result.simulation_result}`, 'success');
+                
+                // Refresh data after simulation
+                setTimeout(() => {
+                    loadDevices();
+                    refreshEnergyDashboard();
+                }, 1000);
+                
+            } catch (error) {
+                showStatus('Failed to simulate activity: ' + (error.error || 'Unknown error'), 'error');
+            }
+        }
+        
+        // Room Management
+        async function loadRooms() {
+            try {
+                const allRooms = await apiCall('/rooms/');
+                rooms = allRooms.filter(room => room.smart_home === currentSmartHome);
+                const container = document.getElementById('rooms-list');
+                container.innerHTML = '';
+                
+                rooms.forEach(room => {
+                    const roomDiv = document.createElement('div');
+                    roomDiv.className = `room ${room.is_unlocked ? 'unlocked' : ''}`;
+                    roomDiv.innerHTML = `
+                        <h3>${room.name}</h3>
+                        <p>Status: ${room.is_unlocked ? 'Unlocked' : 'Locked'}</p>
+                        ${!room.is_unlocked ? 
+                            `<button class="btn-success" onclick="unlockRoom(${room.id})">Unlock Room</button>` :
+                            `<button class="btn-secondary" disabled>Already Unlocked</button>`
+                        }
+                    `;
+                    container.appendChild(roomDiv);
+                });
+            } catch (error) {
+                showStatus('Failed to load rooms: ' + (error.detail || 'Unknown error'), 'error');
+            }
+        }
+        
+        async function unlockRoom(roomId) {
+            try {
+                await apiCall('/rooms/' + roomId + '/', 'PATCH', { is_unlocked: true });
+                showStatus('Room unlocked successfully!');
+                loadRooms();
+            } catch (error) {
+                showStatus('Failed to unlock room: ' + (error.detail || 'Unknown error'), 'error');
+            }
+        }
+        
+        // Device Management
+        async function loadDevices() {
+            try {
+                const allDevices = await apiCall('/devices/');
+                devices = allDevices.filter(device => {
+                    const deviceRoom = rooms.find(r => r.id === device.room);
+                    return deviceRoom && deviceRoom.smart_home === currentSmartHome;
+                });
+                const container = document.getElementById('devices-list');
+                container.innerHTML = '';
+                  devices.forEach(device => {
+                    const deviceDiv = document.createElement('div');
+                    deviceDiv.className = `device ${device.status ? 'on' : 'off'}`;
+                    const room = rooms.find(r => r.id === device.room);
+                    
+                    deviceDiv.innerHTML = `
+                        <h3>${device.name}</h3>
+                        <p>Room: ${room ? room.name : 'Unknown'}</p>
+                        <p>Type: ${device.supported_device_name}</p>
+                        <p>Status: ${device.status ? 'ON' : 'OFF'}</p>
+                        ${device.analogue_value !== null ? `<p>Value: ${device.analogue_value}</p>` : ''}
+                        <div class="device-controls">
+                            <button class="btn-${device.status ? 'danger' : 'success'}" 
+                                    onclick="toggleDevice(${device.id}, ${!device.status})">
+                                ${device.status ? 'Turn OFF' : 'Turn ON'}
+                            </button>
+                            ${device.analogue_value !== null ? `
+                                <input type="range" class="slider" min="0" max="10" 
+                                       value="${device.analogue_value || 0}" 
+                                       onchange="updateAnalogueValue(${device.id}, this.value)">
+                                <span id="value-${device.id}">${device.analogue_value || 0}</span>
+                            ` : ''}
+                            <button class="btn-secondary" onclick="showDeviceEnergyDetails(${device.id})">Energy Details</button>
+                        </div>
+                    `;
+                    container.appendChild(deviceDiv);
+                });
+            } catch (error) {
+                showStatus('Failed to load devices: ' + (error.detail || 'Unknown error'), 'error');
+            }
+        }
+          async function toggleDevice(deviceId, newStatus) {
+            try {
+                await apiCall(`/devices/${deviceId}/`, 'PATCH', { status: newStatus });
+                showStatus(`Device ${newStatus ? 'turned on' : 'turned off'} successfully!`);
+                loadDevices();
+                // Refresh energy data after device change
+                setTimeout(refreshEnergyDashboard, 500);
+            } catch (error) {
+                showStatus('Failed to control device: ' + (error.detail || 'Unknown error'), 'error');
+            }
+        }
+          async function updateAnalogueValue(deviceId, value) {
+            try {
+                await apiCall(`/devices/${deviceId}/`, 'PATCH', { analogue_value: parseFloat(value) });
+                document.getElementById(`value-${deviceId}`).textContent = value;
+                showStatus(`Device value updated to ${value}!`);
+                // Refresh energy data after device change
+                setTimeout(refreshEnergyDashboard, 500);
+            } catch (error) {
+                showStatus('Failed to update device value: ' + (error.detail || 'Unknown error'), 'error');
+            }
+        }
+        
+        // Show detailed energy information for a device
+        async function showDeviceEnergyDetails(deviceId) {
+            try {
+                const energyDetails = await apiCall(`/demo/device/${deviceId}/energy/`);
+                const device = energyDetails.device;
+                const energy = energyDetails.energy_info;
+                
+                let detailsHTML = `
+                    <h3>📊 Energy Details: ${device.name}</h3>
+                    <p><strong>Room:</strong> ${device.room}</p>
+                    <p><strong>Type:</strong> ${device.type}</p>
+                    <p><strong>Current Usage:</strong> ${energy.current_usage_watts}W</p>
+                    <p><strong>Max Consumption:</strong> ${energy.max_consumption_rate}W</p>
+                    <p><strong>Daily Cost Estimate:</strong> $${energy.daily_cost_estimate}</p>
+                    <h4>Recommendations:</h4>
+                    <ul>
+                `;
+                
+                energyDetails.recommendations.forEach(tip => {
+                    detailsHTML += `<li>${tip}</li>`;
+                });
+                
+                detailsHTML += '</ul>';
+                
+                showStatus(detailsHTML, 'info');
+                
+            } catch (error) {
+                showStatus('Failed to get device energy details: ' + (error.error || 'Unknown error'), 'error');
+            }
+        }
+          // Auto-refresh every 10 seconds when logged in
+        setInterval(() => {
+            if (authToken && currentSmartHome) {
+                loadDevices();
+                loadRooms();
+                refreshEnergyDashboard(); // Also refresh energy data
+            }
+        }, 10000); // Increased to 10 seconds for better demo experience
+    </script>
+</body>
+</html>
